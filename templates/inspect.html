@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6">
+    <h2 class="fw-bold mb-3">Inspect News</h2>
+    <p class="text-secondary text-white">
+      Paste a headline, description, article link, or media link.
+      Later, this page will send it to AI for verification.
+    </p>
+
+    <form method="POST" action="/inspect">
+      <div class="mb-3">
+        <label class="form-label">Headline</label>
+        <input type="text" class="form-control" name="headline" placeholder="Enter news headline">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" name="description" rows="4" placeholder="Paste the news text or description here"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Article / Video URL (optional)</label>
+        <input type="url" class="form-control" name="url" placeholder="https://example.com/news-article">
+      </div>
+
+      <button type="submit" class="btn btn-primary">
+        Verify with AI
+      </button>
+    </form>
+  </div>
+
+  <div class="col-md-6 mt-4 mt-md-0">
+    {% if result %}
+      {% if result.error %}
+        <div class="alert alert-danger">{{ result.error }}</div>
+      {% else %}
+        <div class="card p-3 bg-dark text-light">
+
+          <h5 class="fw-bold mb-3">
+            Verification Result
+            {% if result.status == "Real" %}
+              <span class="badge bg-success">{{ result.status }}</span>
+            {% elif result.status == "Fake" %}
+              <span class="badge bg-danger">{{ result.status }}</span>
+            {% elif result.status == "Misleading" %}
+              <span class="badge bg-warning text-dark">{{ result.status }}</span>
+            {% else %}
+              <span class="badge bg-secondary">{{ result.status }}</span>
+            {% endif %}
+          </h5>
+
+          <p><strong>Confidence:</strong>
+            <span class="badge bg-info text-dark">{{ result.confidence }}</span>
+          </p>
+
+          <p class="mt-3"><strong>Explanation:</strong><br>{{ result.explanation }}</p>
+
+          {% if result.most_likely_truth %}
+          <p class="mt-2"><strong>Actual Reality:</strong><br>{{ result.most_likely_truth }}</p>
+          {% endif %}
+
+          {% if result.potential_harms %}
+          <p class="mt-2"><strong>Potential Harms:</strong><br>{{ result.potential_harms }}</p>
+          {% endif %}
+
+          {% if result.required_missing_details and result.required_missing_details != "N/A" %}
+          <p class="mt-2"><strong>Missing Details Required:</strong><br>{{ result.required_missing_details }}</p>
+          {% endif %}
+
+          {% if result.sources %}
+          <p class="mt-3"><strong>Sources:</strong></p>
+          <ul>
+            {% for source in result.sources %}
+              <li><a href="{{ source }}" target="_blank" class="text-info">{{ source }}</a></li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="card text-white p-4 h-100 d-flex justify-content-center align-items-center border border-2 border-white">
+        <p class="fw-bold text-white text-center">
+          Submit news details to view analysis.
+        </p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

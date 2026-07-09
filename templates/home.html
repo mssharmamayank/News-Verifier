@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="mb-4">
+    <h2 class="fw-bold">Latest Indian News</h2>
+    <p class="text-secondary fw-bold">
+      Top headlines today 
+    </p>
+  </div>
+
+  <div class="mb-4">
+    <div class="btn-group" role="group">
+  <a href="/" class="btn btn-outline-light btn-sm {{ 'active' if not active_category else '' }}">All</a>
+  <a href="/?category=finance" class="btn btn-outline-light btn-sm {{ 'active' if active_category=='finance' else '' }}">Finance</a>
+  <a href="/?category=politics" class="btn btn-outline-light btn-sm {{ 'active' if active_category=='politics' else '' }}">Politics</a>
+  <a href="/?category=sports" class="btn btn-outline-light btn-sm {{ 'active' if active_category=='sports' else '' }}">Sports</a>
+  <a href="/?category=technology" class="btn btn-outline-light btn-sm {{ 'active' if active_category=='technology' else '' }}">Technology</a>
+</div>
+
+  </div>
+
+  <div class="row g-4">
+  {% for news in articles %}
+    <div class="col-md-4">
+      <div class="card h-100 p-3">
+        <img
+          src="{{ news.image }}"
+          class="card-img-top mb-3 rounded"
+          alt="Image"
+        />
+        <h5 class="card-title text-white">{{ news.title }}</h5>
+        <p class="card-text text-secondary">
+          {{ news.description if news.description else "No summary available." }}
+        </p>
+        <a href="{{ news.url }}" target="_blank" class="btn btn-outline-light btn-sm mt-auto">Read Full</a>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+  </div>
+{% endblock %}
